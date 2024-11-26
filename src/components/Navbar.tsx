@@ -22,7 +22,7 @@ const Navbar = () => {
             <Image src="/logo.png" alt="" width={24} height={24} />
             <div className="text-2xl tracking-wide">LAMA</div>
             <div className="hidden xl:flex gap-4">
-              <Link href="/">Home</Link>
+              <Link href="/">Homepage</Link>
               <Link href="/">Shop</Link>
               <Link href="/">Deals</Link>
               <Link href="/">About</Link>
