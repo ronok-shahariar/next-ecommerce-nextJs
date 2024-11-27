@@ -1,7 +1,5 @@
 import { wixClientServer } from "@/lib/wixClientServer";
 import { products } from "@wix/stores";
-import { log } from "console";
-import { url } from "inspector";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -16,16 +14,39 @@ const ProductList = async ({
 }: {
   categoryId: string;
   limit?: number;
-  searchParams?:any
+  searchParams?: any;
 }) => {
   const wixClient = await wixClientServer();
-  const res = await wixClient.products
+  // Can't use const here
+  let productQuery = wixClient.products
     .queryProducts()
+    .startsWith("name", searchParams?.name || "")
     .eq("collectionIds", categoryId)
-    .limit(limit || PRODUCT_PER_PAGE)
-    .find();
+    .hasSome("productType", [searchParams?.type || "physical", "digital"])
+    .gt("priceData.price", searchParams?.min || 0)
+    .lt("priceData.price", searchParams?.max || 999999)
+    .limit(limit || PRODUCT_PER_PAGE);
+  // .find();
+ 
+  // Apply sorting based on searchParams (this will modify the query before fetching the results)
+if (searchParams?.sort) {
+  const [sortType, sortBy] = searchParams.sort.split(" ");
+  
+  // Ensure we are sorting by a valid field
+  const validSortFields = ["price", "lastUpdated"]; // Add more fields if needed
+  
+  if (validSortFields.includes(sortBy)) {
+    if (sortType === "asc") {
+      productQuery = productQuery.ascending(sortBy);
+    }
+    if (sortType === "desc") {
+      productQuery = productQuery.descending(sortBy);
+    }
+  } 
+}
 
-  // console.log(res.items[1]);
+// Fetch the sorted products
+const res = await productQuery.find();
 
   return (
     <div className=" mt-12 flex gap-x-8 gap-y-16 justify-between flex-wrap">

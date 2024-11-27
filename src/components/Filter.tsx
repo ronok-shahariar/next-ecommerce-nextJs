@@ -28,8 +28,8 @@ const Filter = () => {
           onChange={handleFilterChange}
         >
           <option>Type</option>
-          <option value="Physical">Physical</option>
-          <option value="Digital">Digital</option>
+          <option value="physical">Physical</option>
+          <option value="digital">Digital</option>
         </select>
         <input
           type="text"
