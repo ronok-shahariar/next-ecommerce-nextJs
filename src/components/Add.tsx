@@ -31,10 +31,10 @@ const Add = ({productId, variantId, stockNumber}:{productId:string | undefined, 
             {quantity}
             <button className="cursor-pointer text-xl" onClick={()=>handleQuantity("i")}>+</button>
           </div>
-          <div className="text-xs">
+          {stockNumber < 1 ? (<div className="text-md font-bold text-red-500">Product is <br /> out of stock !!</div>):(<div className="text-xs">
             Only <span className="text-orange-500">{stockNumber} items</span> left! <br />{" "}
             {"Don't"} miss it
-          </div>
+          </div>) }
         </div>
 
         <button
