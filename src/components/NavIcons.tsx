@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CartModal from "./CartModal";
 import { useWixClient } from "@/hooks/useWixClient";
 import Cookies from "js-cookie";
+import { useCartStore } from "@/hooks/useCartStore";
 
 const NavIcons = () => {
   const [isProfileOpen, setisProfileOpen] = useState(false);
@@ -14,7 +15,7 @@ const NavIcons = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
-  const pathName = usePathname()
+  const pathName = usePathname();
   const wixClient = useWixClient();
   const isLoggedIn = wixClient.auth.loggedIn();
 
@@ -43,19 +44,25 @@ const NavIcons = () => {
   //   window.location.href = authUrl;
   // };
 
-  console.log(pathName);
-  
-
-  const handleLogout = async ()=>{
-    setIsLoading(true)
-    Cookies.remove("refreshToken")
+  const handleLogout = async () => {
+    setIsLoading(true);
+    Cookies.remove("refreshToken");
     const { logoutUrl } = await wixClient.auth.logout(window.location.href);
-    
-    setIsLoading(false)
-    setisProfileOpen(false)
-    router.push(logoutUrl)
 
-  }
+    setIsLoading(false);
+    setisProfileOpen(false);
+    router.push(logoutUrl);
+  };
+
+ 
+
+  const { cart, counter, getCart } = useCartStore();
+
+  useEffect(() => {
+    getCart(wixClient);
+  }, [wixClient, getCart]);
+
+  console.log(cart);
 
   return (
     <div className="flex items-center gap-4 xl:gap-6 relative">
@@ -70,8 +77,10 @@ const NavIcons = () => {
       />
       {isProfileOpen && (
         <div className=" absolute p-4 rounded-md top-12 left-0 bg-white text-sm shadow-md z-20">
-          <Link href="/">Profile</Link>
-          <div className="mt-2 cursor-pointer" onClick={handleLogout}>{isLoading ? "Logging out" : "Logout"}</div>
+          <Link href="/profile">Profile</Link>
+          <div className="mt-2 cursor-pointer" onClick={handleLogout}>
+            {isLoading ? "Logging out" : "Logout"}
+          </div>
         </div>
       )}
       <Image
@@ -87,7 +96,7 @@ const NavIcons = () => {
       >
         <Image src="/cart.png" alt="" width={22} height={22} />
         <div className="absolute -top-4 -right-4 w-6 h-6 bg-lama rounded-full text-white text-sm flex items-center justify-center">
-          2
+          {counter}
         </div>
       </div>
       {isCartOpen && <CartModal />}
