@@ -5,12 +5,16 @@ import Image from "next/image";
 import { media as wixMedia } from "@wix/sdk";
 import { useWixClient } from "@/hooks/useWixClient";
 
+
+
 const CartModal = () => {
   // Temporary
   // const cartItems = true;
 
   const wixClient = useWixClient()
   const { cart, isLoading, removeItem } = useCartStore();
+
+  
 
   return (
     <div className="w-max absolute p-4 shadow-md bg-white top-12 right-0 flex flex-col gap-6 z-20">
@@ -71,7 +75,7 @@ const CartModal = () => {
           <div className="">
             <div className="flex items-center justify-between font-semibold">
               <span>Subtotal</span>
-              <span>${cart.subtotal.amount}</span>
+              <span>${(cart as any).subtotal.amount}</span>
             </div>
             <p className="text-gray-500 text-sm mt-2 mb-4">
               Shopping and taxes calculated at checkout.
